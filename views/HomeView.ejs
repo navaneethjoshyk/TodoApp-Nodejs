@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Home</title>
+</head>
+    <body>
+        <%- include partials/navigation.ejs %>
+        <div class="card border-0 wrap m-3 p-3 ">
+
+            <div class="app m-5 p-5">
+                <form class="form-group" >
+                    <input type="text" name="item" placeholder="Add New Item" class="form-control shadow" required>
+                    <button type="submit" name="button" class="form-control btn btn-outline-light">Add</button>
+                </form>
+
+            </div>
+            <ul class="list-group" id="list-group">
+                <% for (var i = todos.length-1; i > 0; i--){%>
+                    <li class="list-group-item"><%=todos[i].item%></li>
+                <%}%>
+            </ul>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(async function() {
+            $('form').on('submit',function () {
+                var item = $('form input');
+                var todo = {item:item.val()};
+
+                $.ajax({
+                    type:'POST',
+                    url:'/todo',
+                    data:todo,
+                    success: function(data) {
+                        var node = document.createElement("LI");
+                        var textnode = document.createTextNode(data);
+                        node.appendChild(textnode);
+                        document.getElementById("list-group").appendChild(node);
+                    }
+                });
+            });
+
+            $('li').on('click',function () {
+                var item = $(this).text().replace(/ /g,"-");
+
+                $.ajax({
+                    type:'DELETE',
+                    url:'/todo/' + item,
+                    success: function(data) {
+                        location.reload();
+                    }
+                });
+            });
+
+        });
+    </script>
+</html>
